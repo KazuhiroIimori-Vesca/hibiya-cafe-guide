@@ -10,28 +10,32 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@600;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <style>
-/* 日比谷線の路線図を縦に引き、駅ノードごとにカフェを並べる */
+/* エスプレッソ色のヒーローで始まり、日比谷線の路線図を縦に引いて駅ごとにカフェを並べる */
 :root {
-  --bg: #f5f7f8;
+  --bg: #f6f3ef;
   --surface: #ffffff;
-  --ink: #1d2430;
-  --muted: #5b6574;
-  --line: #dde1e6;
+  --ink: #2a211b;
+  --muted: #6a5d53;
+  --line: #e4dcd3;
   --hibiya: #8fa3ad;
-  --accent: #3d5a68;
+  --accent: #7a4f2e;
   --ok: #2e7d4f;
+  --hero-bg: #2b1d15;
+  --hero-ink: #f6ede3;
+  --hero-muted: #d2bfac;
+  --crema: #d29a5c;
   --display: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
   --body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #12161c; --surface: #1a2029; --ink: #e8ebef; --muted: #9aa4b1;
-    --line: #2c3440; --hibiya: #a9bcc5; --accent: #b9d0dc; --ok: #7fcf9f; color-scheme: dark;
+    --bg: #15110e; --surface: #1f1915; --ink: #efe6dc; --muted: #b3a597;
+    --line: #362c25; --hibiya: #a9bcc5; --accent: #e0b07f; --ok: #7fcf9f; --hero-bg: #0f0a07; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #12161c; --surface: #1a2029; --ink: #e8ebef; --muted: #9aa4b1;
-  --line: #2c3440; --hibiya: #a9bcc5; --accent: #b9d0dc; --ok: #7fcf9f; color-scheme: dark;
+  --bg: #15110e; --surface: #1f1915; --ink: #efe6dc; --muted: #b3a597;
+  --line: #362c25; --hibiya: #a9bcc5; --accent: #e0b07f; --ok: #7fcf9f; --hero-bg: #0f0a07; color-scheme: dark;
 }
 body {
   background: var(--bg); color: var(--ink);
@@ -41,16 +45,52 @@ body {
   max-width: 1000px; margin: 0 auto;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 48px 64px;
+  padding-block: 32px 64px;
   display: grid; gap: 40px;
 }
-header { display: grid; gap: 12px; }
-.eyebrow { font-size: 12px; letter-spacing: .2em; color: var(--muted); }
+.hero {
+  background-color: var(--hero-bg); color: var(--hero-ink);
+  background-image:
+    radial-gradient(circle at 88% 18%, transparent 54px, rgba(210,154,92,.16) 55px, rgba(210,154,92,.16) 58px, transparent 59px),
+    radial-gradient(circle at 8% 92%, transparent 80px, rgba(210,154,92,.10) 81px, rgba(210,154,92,.10) 85px, transparent 86px),
+    radial-gradient(ellipse at 70% 120%, rgba(210,154,92,.22), transparent 60%);
+  overflow: hidden;
+}
+.hero-inner {
+  max-width: 1000px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 56px 48px;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px 40px; align-items: center;
+}
+.hero-text { display: grid; gap: 16px; min-width: 0; }
+.eyebrow { font-size: 12px; letter-spacing: .2em; color: var(--crema); }
 h1 {
   font-family: var(--display); font-weight: 900; margin: 0;
-  font-size: clamp(36px, 7vw, 64px); line-height: 1.15; text-wrap: balance;
+  font-size: clamp(38px, 7.5vw, 68px); line-height: 1.12; text-wrap: balance;
 }
-.lead { max-width: 40em; color: var(--muted); margin: 0; }
+.lead { max-width: 34em; color: var(--hero-muted); margin: 0; }
+.stats { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0 0; padding: 0; list-style: none; }
+.stats li {
+  border: 1px solid rgba(246,237,227,.25); border-radius: 999px;
+  padding: 4px 14px; font-size: 13px; color: var(--hero-muted);
+}
+.stats b { color: var(--hero-ink); font-size: 16px; font-variant-numeric: tabular-nums; margin-right: 2px; }
+.cup { width: 230px; max-width: 100%; height: auto; display: block; }
+.cup .steam path { fill: none; stroke: var(--hero-muted); stroke-width: 3; stroke-linecap: round; opacity: .55; }
+@media (max-width: 640px) {
+  .hero-inner { grid-template-columns: 1fr; padding-block: 40px 32px; }
+  .cup { width: 150px; order: -1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cup .steam path { animation: steam 3.2s ease-in-out infinite; }
+  .cup .steam path:nth-child(2) { animation-delay: .9s; }
+  .cup .steam path:nth-child(3) { animation-delay: 1.8s; }
+  @keyframes steam {
+    0%, 100% { transform: translateY(0); opacity: .55; }
+    50% { transform: translateY(-8px); opacity: .2; }
+  }
+}
 
 /* 駅ジャンプ用のミニ路線図 */
 .strip { overflow-x: auto; }
@@ -123,12 +163,32 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 </head>
 <body>
 
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="eyebrow">TOKYO METRO HIBIYA LINE ・ H01 → H06</div>
+      <h1>日比谷線カフェ散歩</h1>
+      <p class="lead">一杯のコーヒーを目当てに、ひと駅ずつ途中下車。中目黒の目黒川沿いのロースタリーから、虎ノ門ヒルズのエスプレッソバーまで、日比谷線の6駅で立ち寄りたいカフェを集めました。</p>
+      <ul class="stats" id="stats"></ul>
+    </div>
+    <svg class="cup" viewBox="0 0 240 220" role="img" aria-label="湯気の立つコーヒーカップ">
+      <g class="steam">
+        <path d="M92 70 C82 56 102 46 92 30"/>
+        <path d="M120 66 C110 50 130 40 120 20"/>
+        <path d="M148 70 C138 56 158 46 148 30"/>
+      </g>
+      <ellipse cx="120" cy="196" rx="104" ry="16" fill="#e9dccd"/>
+      <ellipse cx="120" cy="192" rx="72" ry="9" fill="#d6c4b0"/>
+      <path d="M186 108 c34 -4 40 46 2 50" fill="none" stroke="#f3e9de" stroke-width="12" stroke-linecap="round"/>
+      <path d="M48 92 h144 c0 56 -22 96 -72 96 s-72 -40 -72 -96 z" fill="#f3e9de"/>
+      <ellipse cx="120" cy="92" rx="72" ry="14" fill="#5a3826"/>
+      <ellipse cx="120" cy="92" rx="62" ry="10" fill="#b77c4a"/>
+      <path d="M120 98 c-10 -8 -22 -2 -14 -8 c-10 -2 -6 -12 6 -6 c2 -6 14 -6 8 4 c10 0 8 10 0 10 z" fill="#f6ede3" opacity=".9"/>
+    </svg>
+  </div>
+</header>
+
 <div class="wrap">
-  <header>
-    <div class="eyebrow">TOKYO METRO HIBIYA LINE ・ H01 → H06</div>
-    <h1>日比谷線カフェ散歩</h1>
-    <p class="lead">中目黒から虎ノ門ヒルズまで、日比谷線の6駅をたどるカフェガイドです。目黒川沿いのロースタリーから、麻布台ヒルズの新しいコーヒースタンドまで、駅ごとに立ち寄りたい店を選びました。</p>
-  </header>
 
   <nav class="strip" aria-label="駅へ移動">
     <ol id="strip"></ol>
@@ -228,6 +288,11 @@ const facility = (label, v) => {
   return `<span class="fac ${cls}">${label}：${text}</span>`;
 };
 const igUrl = (tag) => "https://www.instagram.com/explore/tags/" + encodeURIComponent(tag) + "/";
+
+const allCafes = STATIONS.flatMap(s => s.cafes);
+const workable = allCafes.filter(c => c.wifi === "yes" && c.power === "yes").length;
+document.getElementById("stats").innerHTML =
+  `<li><b>${STATIONS.length}</b>駅</li><li><b>${allCafes.length}</b>軒のカフェ</li><li>Wi-Fi・電源あり <b>${workable}</b>軒</li>`;
 
 document.getElementById("strip").innerHTML = STATIONS.map(s =>
   `<li><a href="#${s.code}"><span class="badge">${s.code}</span><span>${s.name}</span></a></li>`
