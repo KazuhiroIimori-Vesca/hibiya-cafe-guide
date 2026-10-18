@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>日比谷線カフェ散歩</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@600;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* 日比谷線の路線図を縦に引き、駅ノードごとにカフェを並べる */
+:root {
+  --bg: #f5f7f8;
+  --surface: #ffffff;
+  --ink: #1d2430;
+  --muted: #5b6574;
+  --line: #dde1e6;
+  --hibiya: #8fa3ad;
+  --accent: #3d5a68;
+  --ok: #2e7d4f;
+  --display: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161c; --surface: #1a2029; --ink: #e8ebef; --muted: #9aa4b1;
+    --line: #2c3440; --hibiya: #a9bcc5; --accent: #b9d0dc; --ok: #7fcf9f; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161c; --surface: #1a2029; --ink: #e8ebef; --muted: #9aa4b1;
+  --line: #2c3440; --hibiya: #a9bcc5; --accent: #b9d0dc; --ok: #7fcf9f; color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--body); font-size: 15px; line-height: 1.8;
+}
+.wrap {
+  max-width: 1000px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 48px 64px;
+  display: grid; gap: 40px;
+}
+header { display: grid; gap: 12px; }
+.eyebrow { font-size: 12px; letter-spacing: .2em; color: var(--muted); }
+h1 {
+  font-family: var(--display); font-weight: 900; margin: 0;
+  font-size: clamp(36px, 7vw, 64px); line-height: 1.15; text-wrap: balance;
+}
+.lead { max-width: 40em; color: var(--muted); margin: 0; }
+
+/* 駅ジャンプ用のミニ路線図 */
+.strip { overflow-x: auto; }
+.strip ol {
+  list-style: none; margin: 0; padding: 4px 0 8px; display: flex; min-width: max-content;
+  position: relative;
+}
+.strip ol::before {
+  content: ""; position: absolute; left: 23px; right: 23px; top: 27px;
+  height: 6px; background: var(--hibiya); border-radius: 3px;
+}
+.strip li { position: relative; width: 96px; display: grid; justify-items: center; gap: 4px; }
+.strip a { color: var(--ink); text-decoration: none; display: grid; justify-items: center; gap: 4px; font-size: 13px; font-weight: 500; }
+.strip a:hover span:last-child { text-decoration: underline; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.badge {
+  width: 46px; height: 46px; flex: none; border-radius: 50%;
+  border: 5px solid var(--hibiya); background: var(--surface); color: var(--ink);
+  display: grid; place-items: center; line-height: 1; position: relative;
+  font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums;
+}
+
+/* 縦の路線 */
+.route { display: grid; gap: 0; }
+.station {
+  display: grid; grid-template-columns: 46px 1fr; column-gap: 18px;
+  position: relative; padding-bottom: 40px; scroll-margin-top: 16px;
+}
+.station::before {
+  content: ""; position: absolute; left: 20px; top: 23px; bottom: -23px;
+  width: 6px; background: var(--hibiya);
+}
+.station:last-child::before { display: none; }
+.station:last-child { padding-bottom: 0; }
+.station-body { display: grid; gap: 14px; min-width: 0; }
+.station-head h2 { font-family: var(--display); font-weight: 600; font-size: 26px; margin: 0; line-height: 46px; }
+.station-head .sub { color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 14px; }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 18px 20px; display: grid; gap: 8px; align-content: start; min-width: 0;
+}
+.card h3 { margin: 0; font-size: 17px; line-height: 1.5; }
+.card p { margin: 0; color: var(--muted); font-size: 14px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.fac { font-size: 12px; padding: 1px 9px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); }
+.fac.yes { border-color: var(--ok); color: var(--ok); font-weight: 700; }
+.fac.no { border-style: dashed; }
+.tag { font-size: 12px; padding: 2px 10px; border-radius: 4px; background: var(--bg); color: var(--muted); }
+.links { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px; }
+.btn {
+  color: var(--accent); font-size: 13px; font-weight: 500; text-decoration: none;
+  border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px;
+  max-width: 100%; overflow-wrap: anywhere;
+}
+.btn:hover { border-color: var(--accent); }
+
+.note {
+  border-top: 1px solid var(--line); padding-top: 20px;
+  color: var(--muted); font-size: 13px; max-width: 48em; margin: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+  .card { transition: border-color .15s; }
+  .card:hover { border-color: var(--accent); }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">TOKYO METRO HIBIYA LINE ・ H01 → H06</div>
+    <h1>日比谷線カフェ散歩</h1>
+    <p class="lead">中目黒から虎ノ門ヒルズまで、日比谷線の6駅をたどるカフェガイドです。目黒川沿いのロースタリーから、麻布台ヒルズの新しいコーヒースタンドまで、駅ごとに立ち寄りたい店を選びました。</p>
+  </header>
+
+  <nav class="strip" aria-label="駅へ移動">
+    <ol id="strip"></ol>
+  </nav>
+
+  <main class="route" id="route"></main>
+
+  <p class="note">掲載内容は2026年10月時点の公開情報をもとにした紹介です。営業時間・定休日・メニューは変わることがあるため、お出かけ前に各店舗の公式情報をご確認ください。「無料Wi-Fi」「電源」は、口コミや紹介記事で確認できたものだけ「あり」「なし」と表示し、確認できなかったものは「未確認」としています。席や時間帯で使えないこともあるので、作業で使う場合は事前にお店へご確認ください。お店の入口や店内の様子は、各カードのボタンから確認できます。「Instagram」は店名のハッシュタグが付いた投稿一覧を開きます（閲覧には Instagram へのログインが必要な場合があります）。「Googleマップで写真を見る」はお店の検索結果を開くので、写真やストリートビューから外観や店内を見られます。</p>
+</div>
+
+<script>
+const STATIONS = [
+  { code: "H01", name: "中目黒", sub: "目黒区 ・ 目黒川沿い",
+    cafes: [
+      { name: "スターバックス リザーブ ロースタリー 東京", wifi: "unknown", power: "no", ig: "スターバックスリザーブロースタリー東京", tags: ["ロースタリー", "目黒川"],
+        text: "隈研吾さん設計の4階建て。店内で焙煎する様子を見ながら、ここでしか飲めないコーヒーやティー、ベーカリーを楽しめます。" },
+      { name: "ONIBUS COFFEE 中目黒", wifi: "unknown", power: "unknown", ig: "onibuscoffee", tags: ["スペシャルティ", "自家焙煎"],
+        text: "線路沿いに建つ古民家を改装したコーヒースタンド。浅煎りのハンドドリップを、電車が行き交う景色と一緒に味わえます。" },
+    ] },
+  { code: "H02", name: "恵比寿", sub: "渋谷区 ・ 恵比寿駅周辺",
+    cafes: [
+      { name: "猿田彦珈琲 恵比寿本店", wifi: "unknown", power: "unknown", ig: "猿田彦珈琲恵比寿", tags: ["スペシャルティ", "本店"],
+        text: "「たった一杯で幸せになるコーヒー屋」を掲げる猿田彦珈琲の本店。こぢんまりした店内で、ブレンドやフレーバーラテを楽しめます。" },
+      { name: "カフェアクイーユ恵比寿", wifi: "unknown", power: "yes", ig: "カフェアクイーユ", tags: ["パンケーキ", "ランチ"],
+        text: "恵比寿駅から歩いて4分ほど。季節のフルーツを使ったパンケーキや、ふわとろのオムライスが人気の食事もできるカフェです。" },
+    ] },
+  { code: "H03", name: "広尾", sub: "港区・渋谷区 ・ 広尾商店街",
+    cafes: [
+      { name: "ブレッド&タパス 沢村 広尾", wifi: "unknown", power: "yes", ig: "沢村広尾", tags: ["ベーカリー", "モーニング"],
+        text: "軽井沢に本店があるベーカリーレストラン。焼きたてのパンとコーヒーで、朝からゆっくり過ごせます。" },
+      { name: "天現寺カフェ", wifi: "yes", power: "yes", ig: "天現寺カフェ", tags: ["ソファ席", "ゆったり"],
+        text: "白を基調にした落ち着いた店内に、広いソファ席が並びます。紅茶やラテを片手に、のんびりしたいときに。" },
+    ] },
+  { code: "H04", name: "六本木", sub: "港区 ・ 六本木エリア",
+    cafes: [
+      { name: "ブルーボトルコーヒー 六本木カフェ", wifi: "yes", power: "unknown", ig: "ブルーボトルコーヒー六本木", tags: ["スペシャルティ", "ひとりでも"],
+        text: "六本木駅からすぐの立ち寄りやすい一軒。ギャラリーめぐりや仕事の合間に、ラテとワッフルで小休止できます。" },
+    ] },
+  { code: "H05", name: "神谷町", sub: "港区 ・ 麻布台ヒルズ",
+    cafes: [
+      { name: "% Arabica 東京 麻布台ヒルズ", wifi: "unknown", power: "unknown", ig: "アラビカ麻布台ヒルズ", tags: ["スペシャルティ", "ラテ"],
+        text: "京都発のコーヒーブランド。麻布台ヒルズ内に出店し、なめらかなラテの評判が高い一軒です。" },
+      { name: "ペリカンカフェ 麻布台ヒルズ店", wifi: "unknown", power: "unknown", ig: "ペリカンカフェ麻布台ヒルズ", tags: ["パン", "モーニング"],
+        text: "浅草の老舗「パンのペリカン」直営のカフェ。厚切りトーストやサンドイッチを、コーヒーや紅茶と一緒に楽しめます。" },
+      { name: "Minimal The Specialty 麻布台ヒルズ", wifi: "unknown", power: "unknown", ig: "minimal麻布台ヒルズ", tags: ["チョコレート", "スイーツ"],
+        text: "Bean to Bar チョコレート専門店「Minimal」の店舗。カカオの個性を生かしたスイーツやドリンクが揃います。" },
+    ] },
+  { code: "H06", name: "虎ノ門ヒルズ", sub: "港区 ・ 虎ノ門ヒルズ",
+    cafes: [
+      { name: "アンダーズ 東京 ペストリーショップ", wifi: "unknown", power: "unknown", ig: "アンダーズ東京ペストリーショップ", tags: ["ホテル", "ケーキ"],
+        text: "虎ノ門ヒルズ森タワー内のホテル「アンダーズ 東京」のペストリーショップ。上品な甘さのケーキは、コーヒーとの相性も抜群です。" },
+    ] },
+];
+
+const mapUrl = (name) => "https://www.google.com/maps/search/" + encodeURIComponent(name);
+const FACILITY = { yes: ["あり", "yes"], no: ["なし", "no"], unknown: ["未確認", "unknown"] };
+const facility = (label, v) => {
+  const [text, cls] = FACILITY[v] || FACILITY.unknown;
+  return `<span class="fac ${cls}">${label}：${text}</span>`;
+};
+const igUrl = (tag) => "https://www.instagram.com/explore/tags/" + encodeURIComponent(tag) + "/";
+
+document.getElementById("strip").innerHTML = STATIONS.map(s =>
+  `<li><a href="#${s.code}"><span class="badge">${s.code}</span><span>${s.name}</span></a></li>`
+).join("");
+
+document.getElementById("route").innerHTML = STATIONS.map(s => `
+  <section class="station" id="${s.code}" aria-labelledby="st-${s.code}">
+    <span class="badge" aria-label="日比谷線 ${s.code}">${s.code}</span>
+    <div class="station-body">
+      <div class="station-head">
+        <h2 id="st-${s.code}">${s.name}</h2>
+        <div class="sub">${s.sub}</div>
+      </div>
+      <div class="cards">
+        ${s.cafes.map(c => `
+          <article class="card">
+            <h3>${c.name}</h3>
+            <div class="tags">${facility("無料Wi-Fi", c.wifi)}${facility("電源", c.power)}${c.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
+            <p>${c.text}</p>
+            <div class="links">
+              <a class="btn" href="${igUrl(c.ig)}" target="_blank" rel="noopener">Instagram #${c.ig}</a>
+              <a class="btn" href="${mapUrl(c.name)}" target="_blank" rel="noopener">Googleマップで写真を見る</a>
+            </div>
+          </article>`).join("")}
+      </div>
+    </div>
+  </section>`).join("");
+</script>
+</body>
+</html>
